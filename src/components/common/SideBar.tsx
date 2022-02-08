@@ -1,11 +1,12 @@
 import React from 'react';
+import styles from './SideBar.module.scss'
 
-function Nav() {
+function SideBar() {
     return (
-        <div>
-            ㅎㅇ
+        <div className={styles['container']}>
+
         </div>
     )
 }
 
-export default Nav;
+export default SideBar;
