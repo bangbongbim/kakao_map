@@ -1,0 +1,60 @@
+@import "../../styles/Root.scss";
+
+.container{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20%;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow:rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    z-index: 10;
+    // !지워야함
+    border: 1px solid blue;
+
+    .header{
+        display: flex;
+        flex-direction: row;
+        align-content: center;
+        flex-wrap: wrap;
+        padding: 15px 10px 10px 10px;
+        // !지워야함
+        border: 1px solid red;
+
+        background-color: #00c4ff;
+
+        .hamburger{
+            width: 25px;
+            height: 25px;
+            margin-right: 25px;
+        }
+        .logo{
+            height: 25px;
+            line-height: 25px;
+            font-size: 21px;
+        }
+        .search-box{
+            width: 100%;
+            .search{
+                margin-top: 10px;
+                width: 100%;
+                box-sizing: border-box;
+                height: 30px;
+                border: none;
+                border-radius: 3px;
+                font-size: 14px;
+                background-image: url('../../assets/search.svg');
+                background-repeat: no-repeat;
+                background-position: 95% 50%;
+                background-size: 18px;
+                padding-right: 35px;
+            }
+
+        }
+
+
+    }
+
+}

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import SideBar from '../components/common/SideBar';
+import SideBar from '../components/SideBar/SideBar';
 import KakaoMap from '../KakaoMap/KakaoMap';
 import styles from './MainContainer.module.scss'
 
