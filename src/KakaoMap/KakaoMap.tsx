@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from './KakaoMap.module.scss'
+// import './KakaoMap.css'
 import { restaurantsInfo } from '../api/restuarants'
 import { async } from '@firebase/util';
 
@@ -15,11 +16,12 @@ type positionType = {
 }
 type markerType = {
     title: string,
-    latlng: object
+    latlng: object,
+    url: string
 }
 function KakaoMap() {
     const [position, setPosition] = useState({ lat: 0, lon: 0 })
-    const [markerData, setMarkerData] = useState([{title:'', latlng:''}])
+    const [markerData, setMarkerData] = useState([{title:'', latlng:'', url:''}])
 
     function createMap(position: positionType) {
 
@@ -58,9 +60,10 @@ function KakaoMap() {
             });
 
             // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-            var content = '<div class="customoverlay">' +
-                '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
-                `    <span class="title">${data.title}</span>` +
+            
+            var content = `<div id="customoverlay" class=${styles['customoverlay']} >` +
+                `  <a href=${data.url} target="_blank">` +
+                `    <span class=${styles['title']}>${data.title}</span>` +
                 '  </a>' +
                 '</div>';
 
@@ -92,6 +95,7 @@ function KakaoMap() {
         }
     }
 
+    
     // ! 식당 예시 데이터 받아오는 함수
     const getRestaurantsInfo = async () => {
         console.log(await restaurantsInfo());
@@ -100,7 +104,8 @@ function KakaoMap() {
                 console.log(t)
                 const data = {
                     title:t.name,
-                    latlng:new window.kakao.maps.LatLng(t.location._lat, t.location._long)                    
+                    latlng:new window.kakao.maps.LatLng(t.location._lat, t.location._long),
+                    url:t.url               
                 }
 
                 setMarkerData(markerData => [...markerData, data]);
