@@ -14,14 +14,16 @@ type positionType = {
     lat: number;
     lon: number
 }
+
 type markerType = {
     title: string,
     latlng: object,
     url: string
 }
+
 function KakaoMap() {
     const [position, setPosition] = useState({ lat: 0, lon: 0 })
-    const [markerData, setMarkerData] = useState([{title:'', latlng:'', url:''}])
+    const [markerData, setMarkerData] = useState<markerType[]>([])
 
     function createMap(position: positionType) {
 
@@ -39,20 +41,18 @@ function KakaoMap() {
 
          // restaurant 마커 정보 추가
          let positions = markerData;
-         
-            
          positions.map(data => {
               // 마커 이미지의 이미지 주소
-             var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; 
+            let imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; 
         
             // 마커 이미지의 이미지 크기 입니다
-            var imageSize = new window.kakao.maps.Size(24, 35); 
+            let imageSize = new window.kakao.maps.Size(24, 35); 
                         
             // 마커 이미지를 생성합니다    
-            var markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
+            let markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
             
             // 마커를 생성합니다
-            var marker = new window.kakao.maps.Marker({
+            let marker = new window.kakao.maps.Marker({
                 map: map, // 마커를 표시할 지도
                 position: data.latlng, // 마커를 표시할 위치
                 title : data.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
@@ -60,8 +60,7 @@ function KakaoMap() {
             });
 
             // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-            
-            var content = `<div id="customoverlay" class=${styles['customoverlay']} >` +
+            let content = `<div id="customoverlay" class=${styles['customoverlay']} >` +
                 `  <a href=${data.url} target="_blank">` +
                 `    <span class=${styles['title']}>${data.title}</span>` +
                 '  </a>' +
@@ -69,10 +68,10 @@ function KakaoMap() {
 
 
             // 커스텀 오버레이가 표시될 위치입니다 
-            // var position = new window.kakao.maps.LatLng(data.latlng);  
+            let position = new window.kakao.maps.LatLng(data.latlng);  
 
             // 커스텀 오버레이를 생성합니다
-            var customOverlay = new window.kakao.maps.CustomOverlay({
+            let customOverlay = new window.kakao.maps.CustomOverlay({
                 map: map,
                 position: data.latlng,
                 content: content,
@@ -80,10 +79,7 @@ function KakaoMap() {
             });
 
          })
-         
- 
     }
-
 
     function getCurrentPosition() {
         if (navigator.geolocation) {
@@ -94,26 +90,23 @@ function KakaoMap() {
             })
         }
     }
-
     
     // ! 식당 예시 데이터 받아오는 함수
     const getRestaurantsInfo = async () => {
-        console.log(await restaurantsInfo());
-        (await restaurantsInfo()).map(a => {
-            a.map((t:any) => {
-                console.log(t)
+        // console.log(await restaurantsInfo());
+        (await restaurantsInfo()).map(list => {
+            list.map((marker:any) => {
+
                 const data = {
-                    title:t.name,
-                    latlng:new window.kakao.maps.LatLng(t.location._lat, t.location._long),
-                    url:t.url               
+                    title:marker.name,
+                    latlng:new window.kakao.maps.LatLng(marker.location._lat, marker.location._long),
+                    url:marker.url               
                 }
 
                 setMarkerData(markerData => [...markerData, data]);
-                console.log(markerData)
-                
             })  
         });
-
+        console.log(markerData)
     }
 
 
