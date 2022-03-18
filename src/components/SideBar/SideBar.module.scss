@@ -6,13 +6,12 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 20%;
+    width: 400px;
     height: 100vh;
     background-color: #fff;
     box-shadow:rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     z-index: 10;
-    // !지워야함
-    border: 1px solid blue;
+
 
     .header{
         display: flex;
@@ -20,8 +19,6 @@
         align-content: center;
         flex-wrap: wrap;
         padding: 15px 10px 10px 10px;
-        // !지워야함
-        border: 1px solid red;
 
         background-color: #00c4ff;
 
@@ -53,8 +50,20 @@
             }
 
         }
+    }
+    .contents-box{
+        margin-top: 15px;
+        padding: 0 10px;
 
-
+        .item-box{
+            display: flex;
+            flex-direction: row;
+            .description-box{
+                .title{
+                    font-size: 14px;
+                }
+            }
+        }
     }
 
 }
