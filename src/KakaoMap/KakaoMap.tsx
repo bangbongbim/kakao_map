@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from './KakaoMap.module.scss'
-// import './KakaoMap.css'
 import { restaurantsInfo } from '../api/restuarants'
 import { async } from '@firebase/util';
+import { defaultMaxListeners } from 'events';
+import Icon from '/Users/sk/kakao_map/src/assets/circle-dot-solid.svg'
 
 declare global {
     interface Window {
@@ -37,20 +38,23 @@ function KakaoMap() {
         setMarker(map);
 
     }
+    
     function setMarker(map:object){
 
          // restaurant 마커 정보 추가
          let positions = markerData;
          positions.map(data => {
               // 마커 이미지의 이미지 주소
-            let imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; 
         
-            // 마커 이미지의 이미지 크기 입니다
-            let imageSize = new window.kakao.maps.Size(24, 35); 
-                        
+            let imageSrc = Icon;
+
+            // 마커 이미지의 이미지 크기
+            let imageSize = new window.kakao.maps.Size(22, 22); 
+
             // 마커 이미지를 생성합니다    
-            let markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
+            let markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize,   )  
             
+            // { offset: new window.kakao.maps.Point(24, 24) }// 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.);) 
             // 마커를 생성합니다
             let marker = new window.kakao.maps.Marker({
                 map: map, // 마커를 표시할 지도
@@ -59,7 +63,7 @@ function KakaoMap() {
                 image : markerImage // 마커 이미지 
             });
 
-            // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+            // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능
             let content = `<div id="customoverlay" class=${styles['customoverlay']} >` +
                 `  <a href=${data.url} target="_blank">` +
                 `    <span class=${styles['title']}>${data.title}</span>` +
@@ -67,10 +71,10 @@ function KakaoMap() {
                 '</div>';
 
 
-            // 커스텀 오버레이가 표시될 위치입니다 
+            // 커스텀 오버레이가 표시될 위치
             let position = new window.kakao.maps.LatLng(data.latlng);  
 
-            // 커스텀 오버레이를 생성합니다
+            // 커스텀 오버레이를 생성
             let customOverlay = new window.kakao.maps.CustomOverlay({
                 map: map,
                 position: data.latlng,
@@ -90,10 +94,7 @@ function KakaoMap() {
             })
         }
     }
-<<<<<<< HEAD
-    
-=======
->>>>>>> 3925a5ae7cfcdcb1b0afb433dba3ffe409a0c8c3
+
     // ! 식당 예시 데이터 받아오는 함수
     const getRestaurantsInfo = async () => {
         // console.log(await restaurantsInfo());
@@ -114,9 +115,9 @@ function KakaoMap() {
 
 
     useEffect(() => {
-        getRestaurantsInfo();
         // 초기 위치 설정
         getCurrentPosition();
+        getRestaurantsInfo();
     }, [])
 
     useEffect(() => {

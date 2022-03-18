@@ -23,11 +23,10 @@
     
     .customoverlay {
         position: relative;
-        bottom: 40px;
+        bottom: 24px;
         border-radius: 6px;
         border: 1px solid #ccc;
         border-bottom: 2px solid #ddd;
-        float: left;
         transform: scale(0.8);
       
         &:nth-of-type(n) {
@@ -42,14 +41,12 @@
           text-align: center;
           border-radius: 6px;
           overflow: hidden;
-          background: #ffc400 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center;
         }
       
         .title {
           display: block;
           text-align: center;
           background: #fff;
-          margin-right: 35px;
           padding: 8px 10px;
           font-size: 15px;
           font-weight: bold;
@@ -58,14 +55,15 @@
         &:after {
           content: '';
           position: absolute;
-          margin-left: -12px;
+          margin-left: -10px;
           left: 50%;
-          bottom: -10px;
+          bottom: -9.5px;
           width: 22px;
           height: 12px;
           background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png');
         }
-      }
+    }
+
     
 }
 
