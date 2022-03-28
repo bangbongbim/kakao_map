@@ -90,6 +90,7 @@ function KakaoMap() {
             })
         }
     }
+
     // ! 식당 예시 데이터 받아오는 함수
     const getRestaurantsInfo = async () => {
         // console.log(await restaurantsInfo());
