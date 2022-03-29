@@ -52,19 +52,24 @@ type itemsProps = {
     setIsLastElement: Dispatch<SetStateAction<boolean>>
 }
 
+
+//TODO 영상이동 url : https://www.youtube.com/watch?v=videoId
 function SideBar(props: itemsProps) {
     const { items, isLastElement, setIsLastElement } = props
     const [ref, inView] = useInView()
 
 
     useEffect(() => {
-        console.log(inView)
         if (inView)
             setIsLastElement(true);
         else
             setIsLastElement(false)
 
     }, [inView, isLastElement])
+
+    const moveYoutubeUrl = (videoId: string) => {
+        window.open(`https://www.youtube.com/watch?v=${videoId}`)
+    }
 
     return (
         <div className={styles['container']}>
@@ -79,7 +84,7 @@ function SideBar(props: itemsProps) {
             <div className={styles['contents-box']}>
                 {
                     items.map(((item, index) => (
-                        <div className={styles['item-box']} key={item.id.videoId} ref={ref}>
+                        <div className={styles['item-box']} key={index} ref={ref} onClick={() => moveYoutubeUrl(item.id.videoId)}>
                             <div className={styles['thumbnail-box']}>
                                 <img
                                     src={item.snippet.thumbnails.default.url}

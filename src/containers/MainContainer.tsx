@@ -51,7 +51,6 @@ type pageInfoType = {
 
 
 
-
 function MainContainer() {
     const maxResults: number = 20; // !한페이지에 불러올 영상 개수 지정
     const [items, setItems] = useState<itemType[]>([])
@@ -64,6 +63,7 @@ function MainContainer() {
         try {
             const prev = items;
             const response = await getYoutubeItems(maxResults, pageInfo.nextPageToken);
+            console.log(response)
             setItems([...prev, ...response.items])
             setPageInfo({ nextPageToken: response.nextPageToken })
         }
@@ -94,6 +94,7 @@ function MainContainer() {
 
 
     useEffect(() => {
+        // 스크롤이 맨 밑에 도착했고, 다음 페이지가 존재할 때 유투브 컨텐츠를 받아옴
         if (isLastElement && pageInfo.nextPageToken) {
             setYoutubeItems();
         }
