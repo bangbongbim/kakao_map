@@ -1,29 +1,55 @@
-import React, { useEffect } from 'react';
-import Nav from '../components/common/SideBar';
+import React, { useState, useEffect } from 'react';
+import SideBar from '../components/SideBar/SideBar';
+import KakaoMap from '../KakaoMap/KakaoMap';
 import styles from './MainContainer.module.scss'
+import { getYoutubeItems } from '../api/youtube'
 
-declare global {
-    interface Window {
-        kakao: any
+
+type thumbnailType = {
+    height: number;
+    url: string;
+    width: number;
+}
+type itemType = {
+    etag: string;
+    id: {
+        kind: string;
+        videoId: string;
+    }
+    kind: string;
+    snippet: {
+        channelId: string;
+        channelTitle: string;
+        description: string;
+        publishTime: string;
+        publishedAt: string;
+        title: string;
+        thumbnails: {
+            default: thumbnailType;
+            high: thumbnailType;
+            medium: thumbnailType
+        }
     }
 }
 
+
 function MainContainer() {
+    const [items, setItems] = useState<itemType[]>([])
+
+    async function setYoutubeItems() {
+        const response: itemType[] = await getYoutubeItems();
+        setItems([...response])
+    }
+
     useEffect(() => {
-        let container = document.getElementById('map')
-        let options = {
-            center: new window.kakao.maps.LatLng(33.450701, 126.570667),
-            level: 3
-        }
-        let map = new window.kakao.maps.Map(container, options)
+        setYoutubeItems()
     }, [])
+
     return (
         <div className={styles['container']}>
             <div className={styles['contents']}>
-                <Nav />
-                <div id="map" className={styles['map']}>
-
-                </div>
+                <SideBar items={items} />
+                <KakaoMap />
             </div>
         </div >
     )

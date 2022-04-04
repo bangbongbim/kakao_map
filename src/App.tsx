@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom'
-import Header from './components/common/SideBar';
-import { Main } from './pages'
+import { Admin, Main } from './pages'
 import { Paths } from './paths'
 
 function App() {
@@ -9,6 +8,7 @@ function App() {
     <>
       <Routes>
         <Route path={Paths.index} element={<Main />} />
+        <Route path={Paths.admin} element={<Admin />} />
       </Routes>
     </>
   );
