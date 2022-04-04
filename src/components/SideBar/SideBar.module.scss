@@ -54,13 +54,24 @@
     .contents-box{
         margin-top: 15px;
         padding: 0 10px;
+        overflow: scroll;
+        &::-webkit-scrollbar{
+            display: none;
+        }
 
         .item-box{
+            cursor: pointer;
             display: flex;
             flex-direction: row;
+            margin-bottom: 15px;
             .description-box{
+                padding-left: 5px;
                 .title{
                     font-size: 14px;
+                    width: 255px;
+                    overflow: hidden;
+                    text-overflow:ellipsis; 
+                    white-space:nowrap;
                 }
             }
         }

@@ -34,7 +34,7 @@ function KakaoMap() {
             level: 12
         }
         let map = new window.kakao.maps.Map(container, options)
-       
+
         setMarker(map);
 
     }
@@ -59,8 +59,8 @@ function KakaoMap() {
             let marker = new window.kakao.maps.Marker({
                 map: map, // 마커를 표시할 지도
                 position: data.latlng, // 마커를 표시할 위치
-                title : data.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-                image : markerImage // 마커 이미지 
+                title: data.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                image: markerImage // 마커 이미지 
             });
 
             // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능
@@ -82,7 +82,7 @@ function KakaoMap() {
                 yAnchor: 1,
             });
 
-         })
+        })
     }
 
     function getCurrentPosition() {
@@ -99,16 +99,16 @@ function KakaoMap() {
     const getRestaurantsInfo = async () => {
         // console.log(await restaurantsInfo());
         (await restaurantsInfo()).map(list => {
-            list.map((marker:any) => {
+            list.map((marker: any) => {
 
                 const data = {
-                    title:marker.name,
-                    latlng:new window.kakao.maps.LatLng(marker.location._lat, marker.location._long),
-                    url:marker.url               
+                    title: marker.name,
+                    latlng: new window.kakao.maps.LatLng(marker.location._lat, marker.location._long),
+                    url: marker.url
                 }
 
                 setMarkerData(markerData => [...markerData, data]);
-            })  
+            })
         });
         console.log(markerData)
     }
@@ -127,7 +127,7 @@ function KakaoMap() {
 
     return (
         <>
-          
+
             <div id="map" className={styles['map']}>
                 <button className={styles['location']} onClick={getCurrentPosition}></button>
             </div>
