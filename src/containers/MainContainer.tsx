@@ -49,16 +49,15 @@ type pageInfoType = {
     nextPageToken?: string;
 }
 
-
-
 function MainContainer() {
     const maxResults: number = 20; // !한페이지에 불러올 영상 개수 지정
     const [items, setItems] = useState<itemType[]>([])
     const [statistics, setStatistics] = useState<any[]>([])
     const [pageInfo, setPageInfo] = useState({ nextPageToken: '' })
     const [isLastElement, setIsLastElement] = useState<boolean>(false);
-    const [address, setAddress] = useState<string>('');
-    
+    const [commentInfo, setCommentInfo] = useState<any[]>([]);
+    const [test, setTest] = useState<any[]>([])
+
     const setYoutubeItems = async () => {
         //TODO 유투브영상, 페이지 토큰 분리
         try {
@@ -79,7 +78,9 @@ function MainContainer() {
                     return getVideoStatistic(item.id.videoId)
                 })
             )
+            console.log('setStatistics before -> ', response)
             setStatistics([...response])
+            // console.log('setStatistics after -> ' , statistics)
         }
         catch (e) {
             console.error(e)
@@ -88,19 +89,18 @@ function MainContainer() {
 
     const setVideoComments = async () => {
         try {
+            // const response = await getVideoComments('UosUIvMG3FE') 
+            console.log(items)
+            const response = await Promise.all(
+                items.map((item, index) => {
+                    return getVideoComments(item.id.videoId)
+                })
+            )
 
-            const response = await getVideoComments('UosUIvMG3FE')
-
-            // console.log("Comment", response)
-            console.log("Comment -> ", response.snippet.topLevelComment.snippet.textOriginal)
+            console.log(response)
+            setCommentInfo([...response]);
+            console.log("CommentInfo", commentInfo)
             
-        const text = response.snippet.topLevelComment.snippet.textOriginal
-        //"주소"만 뽑기
-        let addressIndex = text.indexOf('주소:');
-        let numIndex = text.indexOf('전화번호');
-        console.log(text.substring(addressIndex+3, numIndex))
-        setAddress(text.substring(addressIndex+3, numIndex))
-        console.log(address)
         }
         catch (e) {
             console.error(e)
@@ -127,7 +127,7 @@ function MainContainer() {
         <div className={styles['container']}>
             <div className={styles['contents']}>
                 <SideBar items={items} statistics={statistics} isLastElement={isLastElement} setIsLastElement={setIsLastElement} />
-                <KakaoMap address={address} />
+                <KakaoMap comment={commentInfo} />
             </div>
         </div >
     )

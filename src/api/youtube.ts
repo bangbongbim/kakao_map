@@ -16,7 +16,13 @@ export const getVideoStatistic = async (videoId: string) => {
 }
 
 export const getVideoComments = async (videoId: string) => {
-    const url = `${Paths.videoCommentApi}&videoId=Werz7IXST9s&maxResults=1&key=${process.env.REACT_APP_YOUTUBE_API}`;
-    const response = await axios.get(url);
-    return response.data.items[0];
+    
+    if(videoId == null){
+        return
+    } else {
+        const url = `${Paths.videoCommentApi}&videoId=${videoId}&maxResults=1&key=${process.env.REACT_APP_YOUTUBE_API}`;
+        const response = await axios.get(url);
+        return response.data.items[0];
+    }
+   
 }

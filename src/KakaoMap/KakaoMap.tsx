@@ -25,6 +25,8 @@ type markerType = {
 function KakaoMap(props:any) {
     const [position, setPosition] = useState({ lat: 0, lon: 0 })
     const [markerData, setMarkerData] = useState<markerType[]>([])
+    const [addressInfo, setAddressInfo] = useState<string[]>([])
+    const [address, setAddress] = useState<string[]>([])
 
     function createMap(position: positionType) {
 
@@ -43,7 +45,7 @@ function KakaoMap(props:any) {
     function setMarker(map:object){
 
         // 텍스트 주소 -> 위치 주소로 변경
-        transAddressInfo();
+        getCommentInfo();
 
          // restaurant 마커 정보 추가
          let positions = markerData;
@@ -102,30 +104,68 @@ function KakaoMap(props:any) {
         }
     }
    
-    // address 텍스트 주소 -> 위치 주소로 변환
-    const transAddressInfo = () => {
-         
-         let address = props.address
-         let geocoder = new window.kakao.maps.services.Geocoder();
+    // Comment에서 댓글 텍스트만 걸러내기
+    const getCommentInfo = () => {
+        
+        let comment = props.comment;
+        // console.log('KakaoMap Comment' , comment)
 
-         geocoder.addressSearch(address, function(result:any, status:any) {
-             
-             if(status === window.kakao.maps.services.Status.OK) {
-                 let coords = new window.kakao.maps.LatLng(result[0].y, result[0].x)
-                 
-                 
-                 let titleIndexEnd = address.lastIndexOf("\n");
-                 if(address.substring(titleIndexEnd-1, titleIndexEnd) === ')') titleIndexEnd = titleIndexEnd - 1
-                 
-                 let titleIndexStart = address.lastIndexOf(" ", titleIndexEnd)+1
-
-                 console.log(titleIndexStart, titleIndexEnd);
-                 let title = address.substring(titleIndexStart, titleIndexEnd);
-                setMarkerData(markerData => [...markerData, {title:title, latlng:coords}])
-             }
-         })
+        for(let i in comment){
+            if(comment[i] !== null && comment[i] !== undefined){
+                setAddressInfo(addressInfo => [...addressInfo, comment[i].snippet.topLevelComment.snippet.textOriginal]);
+            }
+        }
+        console.log(addressInfo)
+    
+        // 댓글 중에서 "주소" 텍스트 만 걸러내기
+        getAddressInfo();
+        console.log(address)
+        
+        // "주소" 를 "위치" 데이터로 변환
+        transAddressInfo();
      
     }
+    // 댓글 중에서 "주소" 텍스트 만 걸러내기
+    const getAddressInfo = () => {
+
+        addressInfo.map((value, index) => {
+            let addressIndex = value.indexOf('주소');
+            let numIndex = value.indexOf('전화번호');
+            if(value.indexOf('매장번호') !== -1 && value.indexOf('매장번호') < numIndex) numIndex = numIndex = value.indexOf('매장번호');
+            if(value.indexOf('영업시간') !== -1 && value.indexOf('영업시간') < numIndex) numIndex = numIndex = value.indexOf('영업시간');
+            
+            if(addressIndex !== -1 && numIndex !== -1){
+            
+                console.log(value.substring(addressIndex+3, numIndex));
+                setAddress(address => [...address, value.substring(addressIndex+3, numIndex)])
+            }
+        })
+    }
+
+      // "주소" 를 "위치" 데이터로 변환
+      const transAddressInfo = () => {
+        address.map((value, index) => {
+        
+            // console.log(value)
+            let geocoder = new window.kakao.maps.services.Geocoder();
+
+            geocoder.addressSearch(value, function(result:any, status:any) {
+                
+                if(status === window.kakao.maps.services.Status.OK) {
+                    let coords = new window.kakao.maps.LatLng(result[0].y, result[0].x)
+                      
+                    let titleIndexEnd = value.lastIndexOf("\n");
+                    if(value.substring(titleIndexEnd-1, titleIndexEnd) === ')') titleIndexEnd = titleIndexEnd - 1
+                    let titleIndexStart = value.lastIndexOf(" ", titleIndexEnd)+1
+                    console.log(titleIndexStart, titleIndexEnd)
+                    let title = value.substring(titleIndexStart, titleIndexEnd);
+
+                   setMarkerData(markerData => [...markerData, {title:title, latlng:coords}])
+                }
+            })
+        })
+    }
+
 
     useEffect(() => {
         // 초기 위치 설정
