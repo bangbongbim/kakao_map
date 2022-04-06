@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SideBar from '../components/SideBar/SideBar';
 import KakaoMap from '../KakaoMap/KakaoMap';
 import styles from './MainContainer.module.scss'
-import { getYoutubeItems, getVideoStatistic } from '../api/youtube'
+import { getYoutubeItems, getVideoStatistic, getVideoComments } from '../api/youtube'
 import { async } from '@firebase/util';
 
 
@@ -57,13 +57,13 @@ function MainContainer() {
     const [statistics, setStatistics] = useState<any[]>([])
     const [pageInfo, setPageInfo] = useState({ nextPageToken: '' })
     const [isLastElement, setIsLastElement] = useState<boolean>(false);
-
+    const [address, setAddress] = useState<string>('');
+    
     const setYoutubeItems = async () => {
         //TODO 유투브영상, 페이지 토큰 분리
         try {
             const prev = items;
             const response = await getYoutubeItems(maxResults, pageInfo.nextPageToken);
-            console.log(response)
             setItems([...prev, ...response.items])
             setPageInfo({ nextPageToken: response.nextPageToken })
         }
@@ -86,10 +86,31 @@ function MainContainer() {
         }
     }
 
+    const setVideoComments = async () => {
+        try {
+
+            const response = await getVideoComments('UosUIvMG3FE')
+
+            // console.log("Comment", response)
+            console.log("Comment -> ", response.snippet.topLevelComment.snippet.textOriginal)
+            
+        const text = response.snippet.topLevelComment.snippet.textOriginal
+        //"주소"만 뽑기
+        let addressIndex = text.indexOf('주소:');
+        let numIndex = text.indexOf('전화번호');
+        console.log(text.substring(addressIndex+3, numIndex))
+        setAddress(text.substring(addressIndex+3, numIndex))
+        console.log(address)
+        }
+        catch (e) {
+            console.error(e)
+        }
+    }
 
     useEffect(() => {
         setYoutubeItems()
-        setVideoStatistic()
+        // setVideoStatistic()
+        setVideoComments()
     }, [])
 
 
@@ -106,7 +127,7 @@ function MainContainer() {
         <div className={styles['container']}>
             <div className={styles['contents']}>
                 <SideBar items={items} statistics={statistics} isLastElement={isLastElement} setIsLastElement={setIsLastElement} />
-                <KakaoMap />
+                <KakaoMap address={address} />
             </div>
         </div >
     )

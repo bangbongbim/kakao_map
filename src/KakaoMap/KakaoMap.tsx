@@ -19,10 +19,10 @@ type positionType = {
 type markerType = {
     title: string,
     latlng: object,
-    url: string
+    // url: string
 }
 
-function KakaoMap() {
+function KakaoMap(props:any) {
     const [position, setPosition] = useState({ lat: 0, lon: 0 })
     const [markerData, setMarkerData] = useState<markerType[]>([])
 
@@ -35,14 +35,19 @@ function KakaoMap() {
         }
         let map = new window.kakao.maps.Map(container, options)
 
-        setMarker(map);
-
+        
+        setMarker(map)
+        console.log(markerData)
     }
     
     function setMarker(map:object){
 
+        // 텍스트 주소 -> 위치 주소로 변경
+        transAddressInfo();
+
          // restaurant 마커 정보 추가
          let positions = markerData;
+         
          positions.map(data => {
               // 마커 이미지의 이미지 주소
         
@@ -56,20 +61,21 @@ function KakaoMap() {
             
             // { offset: new window.kakao.maps.Point(24, 24) }// 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.);) 
             // 마커를 생성합니다
+
+            
             let marker = new window.kakao.maps.Marker({
-                map: map, // 마커를 표시할 지도
-                position: data.latlng, // 마커를 표시할 위치
+                map: map,
+                position: data.latlng,
                 title: data.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
                 image: markerImage // 마커 이미지 
             });
 
             // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능
             let content = `<div id="customoverlay" class=${styles['customoverlay']} >` +
-                `  <a href=${data.url} target="_blank">` +
-                `    <span class=${styles['title']}>${data.title}</span>` +
-                '  </a>' +
-                '</div>';
-
+            `  <a href="#" target="_blank">` +
+            `    <span class=${styles['title']}>${data.title}</span>` +
+            '  </a>' +
+            '</div>';
 
             // 커스텀 오버레이가 표시될 위치
             let position = new window.kakao.maps.LatLng(data.latlng);  
@@ -81,6 +87,7 @@ function KakaoMap() {
                 content: content,
                 yAnchor: 1,
             });
+
 
         })
     }
@@ -94,30 +101,35 @@ function KakaoMap() {
             })
         }
     }
+   
+    // address 텍스트 주소 -> 위치 주소로 변환
+    const transAddressInfo = () => {
+         
+         let address = props.address
+         let geocoder = new window.kakao.maps.services.Geocoder();
 
-    // ! 식당 예시 데이터 받아오는 함수
-    const getRestaurantsInfo = async () => {
-        // console.log(await restaurantsInfo());
-        (await restaurantsInfo()).map(list => {
-            list.map((marker: any) => {
+         geocoder.addressSearch(address, function(result:any, status:any) {
+             
+             if(status === window.kakao.maps.services.Status.OK) {
+                 let coords = new window.kakao.maps.LatLng(result[0].y, result[0].x)
+                 
+                 
+                 let titleIndexEnd = address.lastIndexOf("\n");
+                 if(address.substring(titleIndexEnd-1, titleIndexEnd) === ')') titleIndexEnd = titleIndexEnd - 1
+                 
+                 let titleIndexStart = address.lastIndexOf(" ", titleIndexEnd)+1
 
-                const data = {
-                    title: marker.name,
-                    latlng: new window.kakao.maps.LatLng(marker.location._lat, marker.location._long),
-                    url: marker.url
-                }
-
-                setMarkerData(markerData => [...markerData, data]);
-            })
-        });
-        console.log(markerData)
+                 console.log(titleIndexStart, titleIndexEnd);
+                 let title = address.substring(titleIndexStart, titleIndexEnd);
+                setMarkerData(markerData => [...markerData, {title:title, latlng:coords}])
+             }
+         })
+     
     }
-
 
     useEffect(() => {
         // 초기 위치 설정
         getCurrentPosition();
-        getRestaurantsInfo();
     }, [])
 
     useEffect(() => {
