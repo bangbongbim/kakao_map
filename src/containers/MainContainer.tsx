@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import SideBar from '../components/SideBar/SideBar';
 import KakaoMap from '../KakaoMap/KakaoMap';
 import styles from './MainContainer.module.scss'
 import { getYoutubeItems, getVideoStatistic, getVideoComments } from '../api/youtube'
 import { async } from '@firebase/util';
+import Map from '../KakaoMap/Map';
+import item, { getYoutubeItemsAsync } from '../modules/item';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../modules';
+import { useStateRef } from '../hooks/useStateRef';
+import axios from 'axios';
 
 
 type thumbnailType = {
@@ -24,7 +30,7 @@ type statisticType = {
     }
 }
 
-type itemType = {
+export type itemType = {
     etag: string;
     id: {
         kind: string;
@@ -55,82 +61,113 @@ function MainContainer() {
     const [statistics, setStatistics] = useState<any[]>([])
     const [pageInfo, setPageInfo] = useState({ nextPageToken: '' })
     const [isLastElement, setIsLastElement] = useState<boolean>(false);
-    const [commentInfo, setCommentInfo] = useState<any[]>([]);
+    const [commentInfo, setCommentInfo] = useState<any[]>([])
     const [test, setTest] = useState<any[]>([])
 
+    
+    // const item = useSelector((state: RootState) => state.item.itemData.data);
+    // const dispatch = useDispatch();
+    // const setYoutubeItems = () => {
+    //     dispatch(getYoutubeItemsAsync.request(maxResults));
+    // }
+
     const setYoutubeItems = async () => {
-        //TODO 유투브영상, 페이지 토큰 분리
+        
         try {
             const prev = items;
-            const response = await getYoutubeItems(maxResults, pageInfo.nextPageToken);
-            setItems([...prev, ...response.items])
+            const response = await getYoutubeItems(maxResults, pageInfo.nextPageToken)
+                            
+            setItems(prev => [...prev, ...response.items])
             setPageInfo({ nextPageToken: response.nextPageToken })
+            
+            response.items.map( async (item:any, index:any) => {
+                let comment = await getVideoComments(item.id.videoId)
+                console.log(item.id.videoId)
+                setCommentInfo(prev => [...prev, comment])
+            })
+           
+            // const response = await Promise.all(
+            //     items.map((item:any, index:any) => {
+            //         return getVideoComments(item.id.videoId)
+            //     })
+            // )
+
         }
         catch (e) {
             console.error(e);
         }
     }
-
-    const setVideoStatistic = async () => {
-        try {
-            const response: statisticType[] = await Promise.all(
-                items.map((item, index) => {
-                    return getVideoStatistic(item.id.videoId)
-                })
-            )
-            console.log('setStatistics before -> ', response)
-            setStatistics([...response])
-            // console.log('setStatistics after -> ' , statistics)
-        }
-        catch (e) {
-            console.error(e)
-        }
-    }
-
-    const setVideoComments = async () => {
-        try {
-            // const response = await getVideoComments('UosUIvMG3FE') 
-            console.log(items)
-            const response = await Promise.all(
-                items.map((item, index) => {
-                    return getVideoComments(item.id.videoId)
-                })
-            )
-
-            console.log(response)
-            setCommentInfo([...response]);
-            console.log("CommentInfo", commentInfo)
-            
-        }
-        catch (e) {
-            console.error(e)
-        }
-    }
-
     useEffect(() => {
-        setYoutubeItems()
-        // setVideoStatistic()
-        setVideoComments()
+        setYoutubeItems();
+        console.log(items.length);
     }, [])
-
 
     useEffect(() => {
         // 스크롤이 맨 밑에 도착했고, 다음 페이지가 존재할 때 유투브 컨텐츠를 받아옴
         if (isLastElement && pageInfo.nextPageToken) {
             setYoutubeItems();
         }
-    }, [isLastElement])
+    }, [isLastElement, commentInfo])
+   
+    // const setVideoComments = async () => {
+    //     if(commentInfo.length === 0){
+    //         const response = await Promise.all(
+    //             items.map((item:any, index:any) => {
+    //                 return getVideoComments(item.id.videoId)
+    //             })
+    //         )
+    //         console.log(response)
+    //         setCommentInfo([...response]);
+    //     } 
+    // }
 
+    // const testJson = async () => {
+    //     const url = `https://jsonplaceholder.typicode.com/todos`;
+    //     const response = await axios.get(url);
+    //     return response.data;
+    // }
+    // const testCommentJson = async (id:string) => {
+    //     const url = `https://jsonplaceholder.typicode.com/todos/${id}`;
+    //     const response = await axios.get(url);
+    //     return response.data;
+    // }
 
+    // const setYoutubeItems = useCallback(
+    //     async () => {
+    //         const response = await testJson()
+    //         // setItems(prev => [...prev, ...response])
+    //         response.map((item:any, index:any) => {
+    //             testCommentJson(item.id)
+    //         }) 
+    //         setCommentInfo(prev => [...prev, ...response])
 
+    //     }, 
+    // []);
+
+    // const setVideoComments = useCallback(
+    //     async () => {
+    //         console.log('items' , items);
+    //         const response = await Promise.all(
+    //             items.map((item:any, index) => {
+    //                 console.log('setVideoComments', item)
+    //                 testCommentJson(item.id)
+    //             })
+    //         )
+    //         // const response = await testCommentJson("1")
+    //         setCommentInfo(prev => [...prev, ...response])
+    //     }, 
+    // []);
+
+    
     return (
         <div className={styles['container']}>
             <div className={styles['contents']}>
                 <SideBar items={items} statistics={statistics} isLastElement={isLastElement} setIsLastElement={setIsLastElement} />
-                <KakaoMap comment={commentInfo} />
+                <KakaoMap items={items} comment={commentInfo}  />
+                {/* <Map items={items} comment={commentInfo} /> */}
             </div>
         </div >
     )
 }
 
-export default MainContainer;
+export default React.memo(MainContainer)
