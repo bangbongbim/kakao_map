@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../modules';
 import { useStateRef } from '../hooks/useStateRef';
 import axios from 'axios';
+import { getVideoCommentsAsync } from '../modules/comment';
+import { request } from 'https';
 
 
 type thumbnailType = {
@@ -51,7 +53,7 @@ export type itemType = {
         }
     }
 }
-type pageInfoType = {
+export type pageInfoType = {
     nextPageToken?: string;
 }
 
@@ -59,17 +61,16 @@ function MainContainer() {
     const maxResults: number = 20; // !한페이지에 불러올 영상 개수 지정
     const [items, setItems] = useState<itemType[]>([])
     const [statistics, setStatistics] = useState<any[]>([])
-    const [pageInfo, setPageInfo] = useState({ nextPageToken: '' })
+    const [pageInfo, setPageInfo] = useState<pageInfoType>({ nextPageToken: '' })
     const [isLastElement, setIsLastElement] = useState<boolean>(false);
     const [commentInfo, setCommentInfo] = useState<any[]>([])
-    const [test, setTest] = useState<any[]>([])
 
     
-    // const item = useSelector((state: RootState) => state.item.itemData.data);
-    // const dispatch = useDispatch();
-    // const setYoutubeItems = () => {
-    //     dispatch(getYoutubeItemsAsync.request(maxResults));
-    // }
+    const item = useSelector((state: RootState) => state.item.itemData.data);
+    const dispatch = useDispatch();
+    const setYoutubeSaga = () => {
+        dispatch(getYoutubeItemsAsync.request({maxResults, pageInfo }));
+    }
 
     const setYoutubeItems = async () => {
         
@@ -99,6 +100,7 @@ function MainContainer() {
     }
     useEffect(() => {
         setYoutubeItems();
+        setYoutubeSaga();
         console.log(items.length);
     }, [])
 
@@ -106,6 +108,7 @@ function MainContainer() {
         // 스크롤이 맨 밑에 도착했고, 다음 페이지가 존재할 때 유투브 컨텐츠를 받아옴
         if (isLastElement && pageInfo.nextPageToken) {
             setYoutubeItems();
+            setYoutubeSaga();
         }
     }, [isLastElement, commentInfo])
    
