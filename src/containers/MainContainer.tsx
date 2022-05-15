@@ -4,11 +4,9 @@ import KakaoMap from '../KakaoMap/KakaoMap';
 import styles from './MainContainer.module.scss'
 import { getYoutubeItems, getVideoStatistic, getVideoComments } from '../api/youtube'
 import { async } from '@firebase/util';
-import Map from '../KakaoMap/Map';
 import item, { getYoutubeItemsAsync } from '../modules/item';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../modules';
-import { useStateRef } from '../hooks/useStateRef';
 import axios from 'axios';
 import { getVideoCommentsAsync } from '../modules/comment';
 import { request } from 'https';
