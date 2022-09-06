@@ -1,6 +1,6 @@
 @import "../../styles/Root.scss";
 
-.container{
+.container {
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -9,11 +9,11 @@
     width: 400px;
     height: 100vh;
     background-color: #fff;
-    box-shadow:rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     z-index: 10;
 
 
-    .header{
+    .header {
         display: flex;
         flex-direction: row;
         align-content: center;
@@ -22,56 +22,59 @@
 
         background-color: #00c4ff;
 
-        .hamburger{
+        .hamburger {
             width: 25px;
             height: 25px;
             margin-right: 25px;
         }
-        .logo{
+
+        .logo {
             height: 25px;
             line-height: 25px;
             font-size: 21px;
         }
-        .search-box{
+
+        .search-box {
             width: 100%;
-            .search{
+
+            .search {
+                padding: 5px;
                 margin-top: 10px;
                 width: 100%;
                 box-sizing: border-box;
                 height: 30px;
                 border: none;
                 border-radius: 3px;
-                font-size: 14px;
-                background-image: url('../../assets/search.svg');
-                background-repeat: no-repeat;
-                background-position: 95% 50%;
-                background-size: 18px;
-                padding-right: 35px;
+                font-size: 12px;
             }
 
         }
     }
-    .contents-box{
+
+    .contents-box {
         margin-top: 15px;
         padding: 0 10px;
         overflow: scroll;
-        &::-webkit-scrollbar{
+
+        &::-webkit-scrollbar {
             display: none;
         }
 
-        .item-box{
+        .item-box {
             cursor: pointer;
             display: flex;
             flex-direction: row;
             margin-bottom: 15px;
-            .description-box{
+
+            .description-box {
                 padding-left: 5px;
-                .title{
+
+                .title {
                     font-size: 14px;
                     width: 255px;
                     overflow: hidden;
-                    text-overflow:ellipsis; 
-                    white-space:nowrap;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
             }
         }
