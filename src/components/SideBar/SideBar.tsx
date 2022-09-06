@@ -1,4 +1,4 @@
-import React, { useEffect, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import styles from './SideBar.module.scss'
 import { useInView } from 'react-intersection-observer'
 // import logo from '../../assets/logo.png'
@@ -42,6 +42,9 @@ type statisticType = {
         viewCount: string
     }
 }
+type searchType = {
+    text: string;
+}
 
 
 
@@ -56,7 +59,16 @@ type itemsProps = {
 //TODO 영상이동 url : https://www.youtube.com/watch?v=videoId
 function SideBar(props: itemsProps) {
     const { items, isLastElement, setIsLastElement } = props
+    const [text, setText] = useState<searchType | "">("");
     const [ref, inView] = useInView()
+
+
+
+    const onChangeHandler = (e: any) => {
+        const { value } = e.target.value
+
+        setText(value);
+    }
 
 
     useEffect(() => {
@@ -78,7 +90,7 @@ function SideBar(props: itemsProps) {
                 {/* <img src={logo} className={styles['']} alt="Logo" /> */}
                 <p className={styles['logo']}>쩝쩝박사</p>
                 <div className={styles['search-box']}>
-                    <input type="text" className={styles['search']} />
+                    <input type="text" className={styles['search']} onChange={onChangeHandler} />
                 </div>
             </div>
             <div className={styles['contents-box']}>
