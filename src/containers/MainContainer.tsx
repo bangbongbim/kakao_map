@@ -4,11 +4,8 @@ import KakaoMap from '../KakaoMap/KakaoMap';
 import styles from './MainContainer.module.scss'
 import { getYoutubeItems, getVideoStatistic, getVideoComments } from '../api/youtube'
 import { async } from '@firebase/util';
-import item, { getYoutubeItemsAsync } from '../modules/item';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../modules';
 import axios from 'axios';
-import { getVideoCommentsAsync } from '../modules/comment';
 import { request } from 'https';
 
 
@@ -63,12 +60,6 @@ function MainContainer() {
     const [isLastElement, setIsLastElement] = useState<boolean>(false);
     const [commentInfo, setCommentInfo] = useState<any[]>([])
 
-    
-    const item = useSelector((state: RootState) => state.item.itemData.data);
-    const dispatch = useDispatch();
-    const setYoutubeSaga = () => {
-        dispatch(getYoutubeItemsAsync.request({maxResults, pageInfo }));
-    }
 
     const setYoutubeItems = async () => {
         
@@ -98,7 +89,6 @@ function MainContainer() {
     }
     useEffect(() => {
         setYoutubeItems();
-        setYoutubeSaga();
         console.log(items.length);
     }, [])
 
@@ -106,7 +96,6 @@ function MainContainer() {
         // 스크롤이 맨 밑에 도착했고, 다음 페이지가 존재할 때 유투브 컨텐츠를 받아옴
         if (isLastElement && pageInfo.nextPageToken) {
             setYoutubeItems();
-            setYoutubeSaga();
         }
     }, [isLastElement, commentInfo])
    

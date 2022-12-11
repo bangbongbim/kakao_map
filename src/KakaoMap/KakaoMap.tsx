@@ -5,9 +5,7 @@ import { async } from '@firebase/util';
 import { defaultMaxListeners } from 'events';
 import Icon from '../assets/circle-dot-solid.svg'
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../modules';
 import { getVideoComments } from '../api/youtube';
-import { getVideoCommentsAsync } from '../modules/comment';
 
 
 declare global {
@@ -217,9 +215,6 @@ function KakaoMap(props: any) {
         //    })
 
     }
-
-
-
 
     useEffect(() => {
         // 초기 위치 설정
