@@ -8,7 +8,7 @@ function App() {
     <>
       <Routes>
         <Route path={Paths.index} element={<Main />} />
-        <Route path={Paths.admin} element={<Admin />} />
+        {/* <Route path={Paths.admin} element={<Admin />} /> */}
       </Routes>
     </>
   );
