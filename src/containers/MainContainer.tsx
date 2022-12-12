@@ -59,101 +59,92 @@ function MainContainer() {
     const [pageInfo, setPageInfo] = useState<pageInfoType>({ nextPageToken: '' })
     const [isLastElement, setIsLastElement] = useState<boolean>(false);
     const [commentInfo, setCommentInfo] = useState<any[]>([])
-
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<null | unknown>(null);
+  
+    console.log('rendered.......')
 
     const setYoutubeItems = async () => {
         
         try {
             const prev = items;
+
+            // 요청 시작 시 error와 data 초기화
+            setError(null);
+            setItems([]);
+            setCommentInfo([]);
+            setLoading(true);
+
             const response = await getYoutubeItems(maxResults, pageInfo.nextPageToken)
-                            
+            console.log(response)            
             setItems(prev => [...prev, ...response.items])
             setPageInfo({ nextPageToken: response.nextPageToken })
             
-            response.items.map( async (item:any, index:any) => {
-                let comment = await getVideoComments(item.id.videoId)
-                console.log(item.id.videoId)
-                setCommentInfo(prev => [...prev, comment])
-            })
-           
             // const response = await Promise.all(
             //     items.map((item:any, index:any) => {
             //         return getVideoComments(item.id.videoId)
             //     })
             // )
 
+            // response.items.map( async (item:any, index:any) => {
+            //     let comment = await getVideoComments(item.id.videoId)
+            //     console.log(item.id.videoId)
+            //     setCommentInfo(prev => [...prev, comment])
+            //     console.log(comment)
+            // })
+           
+            // response.items.map( async (item:any, index:any) => {
+            //     let comment = await getVideoComments(item.id.videoId)
+            //     console.log(item.id.videoId)
+            //     setCommentInfo(prev => [...prev, comment])
+            //     console.log(comment)
+            // })
+
+            Promise.all(
+                response.items.map( (item:any) =>
+                    getVideoComments(item.id.videoId)
+                )
+              )
+                .then(json => {
+                    setCommentInfo(json.map(data => data))
+                    console.log(json)
+                });
+
+
         }
         catch (e) {
+            setError(e);
             console.error(e);
         }
+        setLoading(false);
     }
     useEffect(() => {
+        console.log('useEffect[] start.....')
+
         setYoutubeItems();
-        console.log(items.length);
+        
     }, [])
 
     useEffect(() => {
+        console.log('useEffect[isLastElement] start.....')
+
         // 스크롤이 맨 밑에 도착했고, 다음 페이지가 존재할 때 유투브 컨텐츠를 받아옴
         if (isLastElement && pageInfo.nextPageToken) {
             setYoutubeItems();
         }
-    }, [isLastElement, commentInfo])
+    }, [isLastElement])
    
-    // const setVideoComments = async () => {
-    //     if(commentInfo.length === 0){
-    //         const response = await Promise.all(
-    //             items.map((item:any, index:any) => {
-    //                 return getVideoComments(item.id.videoId)
-    //             })
-    //         )
-    //         console.log(response)
-    //         setCommentInfo([...response]);
-    //     } 
-    // }
 
-    // const testJson = async () => {
-    //     const url = `https://jsonplaceholder.typicode.com/todos`;
-    //     const response = await axios.get(url);
-    //     return response.data;
-    // }
-    // const testCommentJson = async (id:string) => {
-    //     const url = `https://jsonplaceholder.typicode.com/todos/${id}`;
-    //     const response = await axios.get(url);
-    //     return response.data;
-    // }
+    // if (loading) return <div>로딩중..</div>; 
+    // if (error) return <div>에러가 발생했습니다</div>;
 
-    // const setYoutubeItems = useCallback(
-    //     async () => {
-    //         const response = await testJson()
-    //         // setItems(prev => [...prev, ...response])
-    //         response.map((item:any, index:any) => {
-    //             testCommentJson(item.id)
-    //         }) 
-    //         setCommentInfo(prev => [...prev, ...response])
+    // if (!items && !commentInfo) return null;
 
-    //     }, 
-    // []);
-
-    // const setVideoComments = useCallback(
-    //     async () => {
-    //         console.log('items' , items);
-    //         const response = await Promise.all(
-    //             items.map((item:any, index) => {
-    //                 console.log('setVideoComments', item)
-    //                 testCommentJson(item.id)
-    //             })
-    //         )
-    //         // const response = await testCommentJson("1")
-    //         setCommentInfo(prev => [...prev, ...response])
-    //     }, 
-    // []);
-
-    
     return (
         <div className={styles['container']}>
             <div className={styles['contents']}>
                 <SideBar items={items} statistics={statistics} isLastElement={isLastElement} setIsLastElement={setIsLastElement} />
-                <KakaoMap items={items} comment={commentInfo}  />
+                {/* <KakaoMap items={items} comment={commentInfo}  /> */}
                 {/* <Map items={items} comment={commentInfo} /> */}
             </div>
         </div >
