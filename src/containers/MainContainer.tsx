@@ -68,30 +68,10 @@ function MainContainer() {
         
         try {
             const prev = items;
-
-            // 요청 시작 시 error와 data 초기화
-            setError(null);
-            setItems([]);
-            setCommentInfo([]);
-            setLoading(true);
-
             const response = await getYoutubeItems(maxResults, pageInfo.nextPageToken)
             console.log(response)            
             setItems(prev => [...prev, ...response.items])
             setPageInfo({ nextPageToken: response.nextPageToken })
-            
-            // const response = await Promise.all(
-            //     items.map((item:any, index:any) => {
-            //         return getVideoComments(item.id.videoId)
-            //     })
-            // )
-
-            // response.items.map( async (item:any, index:any) => {
-            //     let comment = await getVideoComments(item.id.videoId)
-            //     console.log(item.id.videoId)
-            //     setCommentInfo(prev => [...prev, comment])
-            //     console.log(comment)
-            // })
            
             // response.items.map( async (item:any, index:any) => {
             //     let comment = await getVideoComments(item.id.videoId)
@@ -106,28 +86,39 @@ function MainContainer() {
                 )
               )
                 .then(json => {
-                    setCommentInfo(json.map(data => data))
+                    setCommentInfo(prev => [...prev, ...json.map(data => data)])
                     console.log(json)
                 });
 
-
         }
         catch (e) {
-            setError(e);
             console.error(e);
         }
-        setLoading(false);
     }
+
+    const setVideoStatistic = async () => {
+        try {
+            const response: statisticType[] = await Promise.all(
+                items.map((item, index) => {
+                    return getVideoStatistic(item.id.videoId)
+                })
+            )
+            setStatistics([...response])
+        }
+        catch (e) {
+            console.error(e)
+        }
+    }
+    
+
     useEffect(() => {
-        console.log('useEffect[] start.....')
 
         setYoutubeItems();
-        
+        setVideoStatistic()
+
     }, [])
 
     useEffect(() => {
-        console.log('useEffect[isLastElement] start.....')
-
         // 스크롤이 맨 밑에 도착했고, 다음 페이지가 존재할 때 유투브 컨텐츠를 받아옴
         if (isLastElement && pageInfo.nextPageToken) {
             setYoutubeItems();
@@ -144,7 +135,7 @@ function MainContainer() {
         <div className={styles['container']}>
             <div className={styles['contents']}>
                 <SideBar items={items} statistics={statistics} isLastElement={isLastElement} setIsLastElement={setIsLastElement} />
-                {/* <KakaoMap items={items} comment={commentInfo}  /> */}
+                <KakaoMap items={items} comment={commentInfo}  />
                 {/* <Map items={items} comment={commentInfo} /> */}
             </div>
         </div >

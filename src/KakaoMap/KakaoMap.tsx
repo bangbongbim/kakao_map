@@ -40,7 +40,7 @@ function KakaoMap(props: any) {
     const [address, setAddress] = useState<any[]>([])
 
     // console.log(props.items);
-    // let items = props.items;
+    let items = props.items;
     let comment = props.comment;
     // console.log(comment)
 
@@ -103,8 +103,6 @@ function KakaoMap(props: any) {
                 content: content,
                 yAnchor: 1,
             });
-
-
         })
     }
 
@@ -121,7 +119,7 @@ function KakaoMap(props: any) {
     // Comment에서 댓글 텍스트만 걸러내기
     const getCommentInfo = (map: any) => {
         let comment = props.comment
-
+        console.log('comment..........???' , comment)
         for (let i in comment) {
             if (comment[i] !== null && comment[i] !== undefined) {
                 let text = comment[i].snippet.topLevelComment.snippet.textOriginal
@@ -133,11 +131,8 @@ function KakaoMap(props: any) {
                 if ((text.indexOf('매장번호') !== -1 && text.indexOf('매장번호') < numIndex) || numIndex === -1) numIndex = text.indexOf('매장번호');
                 if ((text.indexOf('영업시간') !== -1 && text.indexOf('영업시간') < numIndex) || numIndex === -1) numIndex = text.indexOf('영업시간');
                 if (addressIndex !== -1 && numIndex !== -1) {
-
                     text = text.substring(addressIndex + 3, numIndex)
-                    // console.log(text)
                 }
-
 
                 // "주소" 를 "위치" 데이터로 변환
                 let geocoder = new window.kakao.maps.services.Geocoder();
@@ -150,9 +145,14 @@ function KakaoMap(props: any) {
                         let titleIndexEnd = text.lastIndexOf("\n");
                         if (text.substring(titleIndexEnd - 1, titleIndexEnd) === ')') titleIndexEnd = titleIndexEnd - 1
                         let titleIndexStart = text.lastIndexOf(" ", titleIndexEnd) + 1
-                        // console.log(titleIndexStart, titleIndexEnd)
+                        
+                        // 마지막 개행 옆에 공백문자가 있을 경우 처리 
+                        if(titleIndexEnd === titleIndexStart){
+                            titleIndexStart = text.lastIndexOf(" ", titleIndexEnd-5) + 1
+                            // text = text.trim();
+                        }
+                                        
                         let title = text.substring(titleIndexStart, titleIndexEnd);
-
 
                         displayMarker(id, title, coords, map);
 
@@ -162,13 +162,6 @@ function KakaoMap(props: any) {
                 })
             }
         }
-        console.log(addressInfo)
-
-        // 댓글 중에서 "주소" 텍스트 만 걸러내기
-        // getAddressInfo();
-
-        // "주소" 를 "위치" 데이터로 변환
-        // transAddressInfo()
 
     }
 
@@ -223,12 +216,18 @@ function KakaoMap(props: any) {
 
     useEffect(() => {
         createMap(position)
-    }, [position, getCommentInfo])
+    }, [position, comment])
 
+    // useEffect(() => {
+    //     createMap(position)
+    // }, [position])
+
+    // useEffect(() => {
+    //     getCommentInfo(map);
+    // }, [comment])
 
     return (
         <>
-
             <div id="map" className={styles['map']}>
                 <button className={styles['location']} onClick={getCurrentPosition}></button>
             </div>
