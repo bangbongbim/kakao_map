@@ -30,7 +30,6 @@ type itemType = {
         }
     }
 }
-
 type statisticType = {
     etag: string;
     id: string;
@@ -45,9 +44,6 @@ type statisticType = {
 type searchType = {
     text: string;
 }
-
-
-
 type itemsProps = {
     items: itemType[];
     statistics: statisticType[]
@@ -55,21 +51,17 @@ type itemsProps = {
     setIsLastElement: Dispatch<SetStateAction<boolean>>
 }
 
-
 //TODO 영상이동 url : https://www.youtube.com/watch?v=videoId
 function SideBar(props: itemsProps) {
     const { items, isLastElement, setIsLastElement } = props
     const [text, setText] = useState<searchType | "">("");
     const [ref, inView] = useInView()
 
-
-
     const onChangeHandler = (e: any) => {
         const { value } = e.target.value
 
         setText(value);
     }
-
 
     useEffect(() => {
         if (inView)
