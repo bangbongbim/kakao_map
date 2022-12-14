@@ -35,14 +35,14 @@ type addressType = {
 
 function KakaoMap(props: any) {
     const [position, setPosition] = useState({ lat: 0, lon: 0 })
-    const [markerData, setMarkerData] = useState<markerType[]>([])
-    const [addressInfo, setAddressInfo] = useState<addressType[]>([])
-    const [address, setAddress] = useState<any[]>([])
+    const [currentPosition, setCurrentPosition] = useState({ lat: 0, lon: 0 })
+    
 
     // console.log(props.items);
     let items = props.items;
     let comment = props.comment;
     // console.log(comment)
+    let map:any; 
 
     function createMap(position: positionType) {
         let container = document.getElementById('map')
@@ -50,60 +50,51 @@ function KakaoMap(props: any) {
             center: new window.kakao.maps.LatLng(position.lat, position.lon),
             level: 12
         }
-        let map = new window.kakao.maps.Map(container, options)
+        map = new window.kakao.maps.Map(container, options)
 
+        // 현재 center정보 저장
+        changeCenterPosition();
+        
         getCommentInfo(map)
-        // console.log(markerData);
     }
 
-    function setMarker(map: object) {
+    function createMapUpdateMarker() {
 
-        // 텍스트 주소 -> 위치 주소로 변경
-        //  getCommentInfo();
+        let container = document.getElementById('map')
+        let options: object = {
+            center: new window.kakao.maps.LatLng(currentPosition.lat, currentPosition.lon),
+            level: 12
+        }
+        map = new window.kakao.maps.Map(container, options)
+        
+        changeCenterPosition();
 
-        // restaurant 마커 정보 추가
-        let positions = addressInfo
-        console.log(positions)
+        getCommentInfo(map)
+    }
 
-        positions.map(data => {
-            // 마커 이미지의 이미지 주소
-            let imageSrc = Icon;
+    function changeCenterPosition() {
 
-            // 마커 이미지의 이미지 크기
-            let imageSize = new window.kakao.maps.Size(22, 22);
+        // setCurrentPosition({ lat:map.getCenter().getLat() , lon: map.getCenter().getLng() })
+        // console.log(currentPosition)
 
-            // 마커 이미지를 생성합니다    
-            let markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize,)
+        // 지도가 이동, 확대, 축소로 인해 중심좌표가 변경되면 마지막 파라미터로 넘어온 함수를 호출하도록 이벤트를 등록합니다
+        window.kakao.maps.event.addListener(map, 'center_changed', function() {
 
-            // { offset: new window.kakao.maps.Point(24, 24) }// 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.);) 
-            // 마커를 생성합니다
+            // 지도의  레벨을 얻어옵니다
+            var level = map.getLevel();
 
+            // 지도의 중심좌표를 얻어옵니다 
+            var latlng = map.getCenter(); 
 
-            let marker = new window.kakao.maps.Marker({
-                map: map,
-                position: data.latlng,
-                title: data.title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-                image: markerImage // 마커 이미지 
-            });
+            var message = '<p>지도 레벨은 ' + level + ' 이고</p>';
+            message += '<p>중심 좌표는 위도 ' + latlng.getLat() + ', 경도 ' + latlng.getLng() + '입니다</p>';
 
-            // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능
-            let content = `<div id="customoverlay" class=${styles['customoverlay']} >` +
-                `  <a href="#" target="_blank">` +
-                `    <span class=${styles['title']}>${data.title}</span>` +
-                '  </a>' +
-                '</div>';
+            setCurrentPosition({ lat:map.getCenter().getLat() , lon: map.getCenter().getLng() })
 
-            // 커스텀 오버레이가 표시될 위치
-            let position = new window.kakao.maps.LatLng(data.latlng);
+            console.log(message)
 
-            // 커스텀 오버레이를 생성
-            let customOverlay = new window.kakao.maps.CustomOverlay({
-                map: map,
-                position: data.latlng,
-                content: content,
-                yAnchor: 1,
-            });
-        })
+        });
+
     }
 
     function getCurrentPosition() {
@@ -216,15 +207,11 @@ function KakaoMap(props: any) {
 
     useEffect(() => {
         createMap(position)
-    }, [position, comment])
+    }, [position])
 
-    // useEffect(() => {
-    //     createMap(position)
-    // }, [position])
-
-    // useEffect(() => {
-    //     getCommentInfo(map);
-    // }, [comment])
+    useEffect(() => {
+        createMapUpdateMarker();
+    }, [comment])
 
     return (
         <>
