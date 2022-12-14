@@ -148,7 +148,7 @@ function KakaoMap(props: any) {
                         
                         // 마지막 개행 옆에 공백문자가 있을 경우 처리 
                         if(titleIndexEnd === titleIndexStart){
-                            titleIndexStart = text.lastIndexOf(" ", titleIndexEnd-5) + 1
+                            titleIndexStart = text.lastIndexOf(" ", titleIndexEnd - 5) + 1
                             // text = text.trim();
                         }
                                         
