@@ -37,11 +37,8 @@ function KakaoMap(props: any) {
     const [position, setPosition] = useState({ lat: 0, lon: 0 })
     const [currentPosition, setCurrentPosition] = useState({ lat: 0, lon: 0 })
     
-
-    // console.log(props.items);
     let items = props.items;
     let comment = props.comment;
-    // console.log(comment)
     let map:any; 
 
     function createMap(position: positionType) {
