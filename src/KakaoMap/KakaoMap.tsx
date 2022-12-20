@@ -36,9 +36,8 @@ type addressType = {
 function KakaoMap(props: any) {
     const [position, setPosition] = useState({ lat: 0, lon: 0 })
     const [currentPosition, setCurrentPosition] = useState({ lat: 0, lon: 0 })
-    
-    // test
-    let items = props.items;
+    const [currentLevel, setCurrentLevel] = useState()
+
     let comment = props.comment;
     let map:any; 
 
@@ -61,7 +60,7 @@ function KakaoMap(props: any) {
         let container = document.getElementById('map')
         let options: object = {
             center: new window.kakao.maps.LatLng(currentPosition.lat, currentPosition.lon),
-            level: 12
+            level: currentLevel
         }
         map = new window.kakao.maps.Map(container, options)
         
@@ -72,9 +71,6 @@ function KakaoMap(props: any) {
 
     function changeCenterPosition() {
 
-        // setCurrentPosition({ lat:map.getCenter().getLat() , lon: map.getCenter().getLng() })
-        // console.log(currentPosition)
-
         // 지도가 이동, 확대, 축소로 인해 중심좌표가 변경되면 마지막 파라미터로 넘어온 함수를 호출하도록 이벤트를 등록합니다
         window.kakao.maps.event.addListener(map, 'center_changed', function() {
 
@@ -84,13 +80,10 @@ function KakaoMap(props: any) {
             // 지도의 중심좌표를 얻어옵니다 
             var latlng = map.getCenter(); 
 
-            var message = '<p>지도 레벨은 ' + level + ' 이고</p>';
-            message += '<p>중심 좌표는 위도 ' + latlng.getLat() + ', 경도 ' + latlng.getLng() + '입니다</p>';
-
             setCurrentPosition({ lat:map.getCenter().getLat() , lon: map.getCenter().getLng() })
+            setCurrentLevel(level)
 
-            console.log(message)
-
+            console.log(latlng)
         });
 
     }
