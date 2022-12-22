@@ -3,10 +3,6 @@ import SideBar from '../components/SideBar/SideBar';
 import KakaoMap from '../KakaoMap/KakaoMap';
 import styles from './MainContainer.module.scss'
 import { getYoutubeItems, getVideoStatistic, getVideoComments } from '../api/youtube'
-import { async } from '@firebase/util';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
-import { request } from 'https';
 
 
 type thumbnailType = {
@@ -59,10 +55,6 @@ function MainContainer() {
     const [pageInfo, setPageInfo] = useState<pageInfoType>({ nextPageToken: '' })
     const [isLastElement, setIsLastElement] = useState<boolean>(false);
     const [commentInfo, setCommentInfo] = useState<any[]>([])
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<null | unknown>(null);
-  
-    console.log('rendered.......')
 
     const setYoutubeItems = async () => {
         
@@ -72,13 +64,6 @@ function MainContainer() {
             console.log(response)            
             setItems(prev => [...prev, ...response.items])
             setPageInfo({ nextPageToken: response.nextPageToken })
-           
-            // response.items.map( async (item:any, index:any) => {
-            //     let comment = await getVideoComments(item.id.videoId)
-            //     console.log(item.id.videoId)
-            //     setCommentInfo(prev => [...prev, comment])
-            //     console.log(comment)
-            // })
 
             Promise.all(
                 response.items.map( (item:any) =>
@@ -126,17 +111,11 @@ function MainContainer() {
     }, [isLastElement])
    
 
-    // if (loading) return <div>로딩중..</div>; 
-    // if (error) return <div>에러가 발생했습니다</div>;
-
-    // if (!items && !commentInfo) return null;
-
     return (
         <div className={styles['container']}>
             <div className={styles['contents']}>
                 <SideBar items={items} statistics={statistics} isLastElement={isLastElement} setIsLastElement={setIsLastElement} />
                 <KakaoMap items={items} comment={commentInfo}  />
-                {/* <Map items={items} comment={commentInfo} /> */}
             </div>
         </div >
     )
