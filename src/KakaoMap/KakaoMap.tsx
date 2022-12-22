@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from './KakaoMap.module.scss'
-import { restaurantsInfo } from '../api/restuarants'
-import { async } from '@firebase/util';
-import { defaultMaxListeners } from 'events';
 import Icon from '../assets/circle-dot-solid.svg'
-import { useDispatch, useSelector } from 'react-redux';
-import { getVideoComments } from '../api/youtube';
 
 
 declare global {
@@ -76,7 +71,6 @@ function KakaoMap(props: any) {
 
             // 지도의  레벨을 얻어옵니다
             var level = map.getLevel();
-
             // 지도의 중심좌표를 얻어옵니다 
             var latlng = map.getCenter(); 
 
@@ -101,12 +95,10 @@ function KakaoMap(props: any) {
     // Comment에서 댓글 텍스트만 걸러내기
     const getCommentInfo = (map: any) => {
         let comment = props.comment
-        console.log('comment..........???' , comment)
         for (let i in comment) {
             if (comment[i] !== null && comment[i] !== undefined) {
                 let text = comment[i].snippet.topLevelComment.snippet.textOriginal
                 let id = comment[i].snippet.videoId
-                // setAddressInfo(addressInfo => [...addressInfo, {text:comment[i].snippet.topLevelComment.snippet.textOriginal, id:comment[i].snippet.videoId}]);
 
                 let addressIndex = text.indexOf('주소');
                 let numIndex = text.indexOf('전화번호');
@@ -131,15 +123,12 @@ function KakaoMap(props: any) {
                         // 마지막 개행 옆에 공백문자가 있을 경우 처리 
                         if(titleIndexEnd === titleIndexStart){
                             titleIndexStart = text.lastIndexOf(" ", titleIndexEnd - 5) + 1
-                            // text = text.trim();
                         }
                                         
                         let title = text.substring(titleIndexStart, titleIndexEnd);
 
                         displayMarker(id, title, coords, map);
 
-                        // setAddressInfo(addressInfo => [...addressInfo, {id:id, title:title, latlng:coords}])
-                        // console.log(title)
                     }
                 })
             }
@@ -149,11 +138,6 @@ function KakaoMap(props: any) {
 
     function displayMarker(id: any, title: any, coords: any, map: any) {
 
-        // restaurant 마커 정보 추가
-        // let positions = addressInfo
-        // console.log(positions)
-
-        // positions.map(data => {
         // 마커 이미지의 이미지 주소
         let imageSrc = Icon;
         // 마커 이미지의 이미지 크기
@@ -186,9 +170,6 @@ function KakaoMap(props: any) {
             yAnchor: 1,
         });
 
-
-        //    })
-
     }
 
     useEffect(() => {
@@ -209,7 +190,6 @@ function KakaoMap(props: any) {
             <div id="map" className={styles['map']}>
                 <button className={styles['location']} onClick={getCurrentPosition}></button>
             </div>
-            <h1>  </h1>
         </>
 
     )
