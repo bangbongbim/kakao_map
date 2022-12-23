@@ -14,24 +14,11 @@ type positionType = {
     lon: number
 }
 
-type markerType = {
-    id?: string,
-    title: string,
-    latlng: object,
-    // url: string
-}
-
-type addressType = {
-    id?: string,
-    text?: string,
-    title?: string,
-    latlng?: object
-}
 
 function KakaoMap(props: any) {
     const [position, setPosition] = useState({ lat: 0, lon: 0 })
     const [currentPosition, setCurrentPosition] = useState({ lat: 0, lon: 0 })
-    const [currentLevel, setCurrentLevel] = useState()
+    const [currentLevel, setCurrentLevel] = useState(12)
 
     let comment = props.comment;
     let map:any; 
@@ -77,7 +64,7 @@ function KakaoMap(props: any) {
             setCurrentPosition({ lat:map.getCenter().getLat() , lon: map.getCenter().getLng() })
             setCurrentLevel(level)
 
-            console.log(latlng)
+            // console.log(latlng)
         });
 
     }
@@ -127,7 +114,7 @@ function KakaoMap(props: any) {
                                         
                         let title = text.substring(titleIndexStart, titleIndexEnd);
 
-                        displayMarker(id, title, coords, map);
+                        displayMarker( title, coords, map);
 
                     }
                 })
@@ -136,7 +123,7 @@ function KakaoMap(props: any) {
 
     }
 
-    function displayMarker(id: any, title: any, coords: any, map: any) {
+    function displayMarker(title: String, coords: Object, map: Object) {
 
         // 마커 이미지의 이미지 주소
         let imageSrc = Icon;
