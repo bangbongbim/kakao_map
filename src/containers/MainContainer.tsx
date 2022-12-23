@@ -23,7 +23,7 @@ type statisticType = {
     }
 }
 
-export type itemType = {
+type itemType = {
     etag: string;
     id: {
         kind: string;
@@ -44,8 +44,20 @@ export type itemType = {
         }
     }
 }
-export type pageInfoType = {
+type pageInfoType = {
     nextPageToken?: string;
+}
+
+type commentInfoType = {
+
+    snippet: {
+        videoId: string;
+        topLevelComment: {
+            snippet: {
+                textOriginal: string
+            }
+        }
+    }
 }
 
 function MainContainer() {
@@ -54,7 +66,7 @@ function MainContainer() {
     const [statistics, setStatistics] = useState<any[]>([])
     const [pageInfo, setPageInfo] = useState<pageInfoType>({ nextPageToken: '' })
     const [isLastElement, setIsLastElement] = useState<boolean>(false);
-    const [commentInfo, setCommentInfo] = useState<any[]>([])
+    const [commentInfo, setCommentInfo] = useState<commentInfoType[]>([])
 
     const setYoutubeItems = async () => {
         
